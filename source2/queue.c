@@ -1,7 +1,6 @@
 #include "queue.h"
 #include "elev.h"
 #include "position.h"
-#include "io.h"
 #include "state.h"
 
 #include <stdio.h>
@@ -23,13 +22,12 @@ void queue_delete_all(){
 	queue_set_button_lights();
 }
 
-// //litt scetchy at floor er blå
 void queue_order_done(int button, int floor){
 	orderqueue[floor][button] = 0;
 }
 //
 void queue_check_floor(int floor_var, elev_motor_direction_t dir){
-	if (elev_get_floor_sensor_signal()== -1) {//endret ting her ettersom det sto flor_var og ikke elev get signal
+	if (elev_get_floor_sensor_signal()== -1) {
 		return;
 	}
 	if(dir==DIRN_UP){
@@ -44,7 +42,6 @@ void queue_check_floor(int floor_var, elev_motor_direction_t dir){
 			}
 		}
 		if (sum==0){
-			printf("running down and hit order\n");
 			state_set_state(ORDER_STOP);
 			position_set_dir(DIRN_STOP);
 		}
@@ -52,7 +49,6 @@ void queue_check_floor(int floor_var, elev_motor_direction_t dir){
 	if(dir==DIRN_DOWN){
 
 		if(orderqueue[floor_var][BUTTON_CALL_DOWN] || orderqueue[floor_var][BUTTON_COMMAND]){
-			printf("running down and hit order\n");
 			state_set_state(ORDER_STOP);
 		 }
 		int sum=0;
@@ -62,7 +58,6 @@ void queue_check_floor(int floor_var, elev_motor_direction_t dir){
 			}
 		}
 		if (sum==0){
-			printf("running down and hit order\n");
 			state_set_state(ORDER_STOP);
 			position_set_dir(DIRN_STOP);
 		}

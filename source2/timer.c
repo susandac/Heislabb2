@@ -1,9 +1,7 @@
 #include <time.h>
 #include "timer.h"
 
-
 clock_t start_time;
-
 
 void timer_start_timer(){
 	start_time = clock();

@@ -2,6 +2,7 @@
 #include "queue.h"
 #include "elev.h"
 #include <stdio.h>
+#include <math.h>
 
 
 int current_floor;
@@ -16,9 +17,6 @@ elev_motor_direction_t position_get_dir(){
 	return direction;
 }
 
-void position_set_floor(int floor){
-	current_floor = floor;
-}
 float position_get_position(){
 	return current_position;
 }
@@ -45,20 +43,23 @@ void position_check_buttons() {
 
 void position_update_floor() {
 	int floor = elev_get_floor_sensor_signal();
+	// funker ikke når vi snur mellom etasjer, f. eks. stoppknapp!
 	if (floor == -1) {
-		if (direction == DIRN_UP){
+		if ((direction == DIRN_UP) && !(floorf(current_position)-current_position)){
 			current_position = current_floor + 0.5;
 		}
-		else if (direction == DIRN_DOWN){
+		else if ((direction == DIRN_DOWN) && !(floorf(current_position)-current_position)){
 			current_position = current_floor - 0.5;
 		}
-		printf("current_position: %f\n", current_position);
+		printf("Current_position: %f\n", current_position);
+		printf("Current_floor: %i\n", current_floor);
 		return;
 	}
-	position_set_floor(floor);
 	elev_set_floor_indicator(floor);
 	current_position = floor;
-	printf("current_position: %f\n", current_position);
+	current_floor = floor;
+	printf("Current_position: %f\n", current_position);
+	printf("Current_floor: %i\n", current_floor);
 }
 
 void position_open_door(){

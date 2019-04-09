@@ -1,4 +1,9 @@
 
+/**
+* @file
+* @brief A final state machine for the elevator
+*/
+
 typedef enum tag_state_elevator_states {
     EMERGENCY_STOP = 0,
     DRIVING = 1,
@@ -7,14 +12,18 @@ typedef enum tag_state_elevator_states {
 } state_elevator_states_t;
 
 /**
-*shifts state to EMERGENCY_STOP if emergencybutton is pulled
+*@brief Shifts state to EMERGENCY_STOP if emergency stop button is pushed
 */
 void state_check_emergency_stop();
+
 /**
-*Controls the state of the elevator .
+*@brief Controls the state of the elevator
 */
-void elevator_state();
+void state_elevator_FSM();
+
 /**
-*shifts the elevator state
+*@brief Shifts the variable @c current_state to @p state
+*
+*@param[in] state next state for the elevator FSM
 */
-void state_set_state();
+void state_set_state(state_elevator_states_t state);

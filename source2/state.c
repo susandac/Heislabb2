@@ -1,6 +1,5 @@
 #include "elev.h"
 #include "position.h"
-#include "io.h"
 #include "queue.h"
 #include "state.h"
 #include "timer.h"
@@ -18,10 +17,9 @@ void state_check_emergency_stop(){///denne er ny
 	}
 }
 
-void elevator_state(){
+void state_elevator_FSM(){
 	switch (current_state) {
 		case EMERGENCY_STOP:
-		printf("emergency stop\n");
 		elev_set_motor_direction(DIRN_STOP);
 		queue_delete_all();
 		position_update_floor();
@@ -54,11 +52,8 @@ void elevator_state(){
 		queue_order_done(BUTTON_CALL_DOWN, position_get_floor());
 		position_open_door();
 		timer_start_timer();
-		elev_set_motor_direction(DIRN_STOP);
 
 		while (!timer_timeout()){
-		// 	int isTimeout = timer_timeout();
-		// 	printf("isTimeout: %d", isTimeout);
 			position_check_buttons();
 			queue_set_button_lights();
 			state_check_emergency_stop();
@@ -77,7 +72,6 @@ void elevator_state(){
 		break;
 
 		case IDLE:
-		printf("idle\n");
 		position_update_floor();
 		elev_set_motor_direction(DIRN_STOP);
 		position_check_buttons();
