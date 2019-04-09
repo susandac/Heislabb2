@@ -3,6 +3,10 @@
 #include "position.h"
 #include "state.h"
 
+//Kunne kanskje fiksa state-ting i state?
+//Kunne vi klart oss uten elev her?
+//Forslag: legge til drive up og drive down funksjoner i position som fikser motor, variabel og state. Evt bare motor og variabel.
+
 #include <stdio.h>
 
 int orderqueue[N_FLOORS][N_BUTTONS] = {{0}};

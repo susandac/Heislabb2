@@ -5,6 +5,8 @@
 #include "timer.h"
 #include <stdio.h>
 
+//Kanskje state kunne vert uavhengig av elev.h?
+
 state_elevator_states_t current_state;
 
 void state_set_state(state_elevator_states_t state){

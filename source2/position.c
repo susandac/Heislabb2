@@ -48,7 +48,6 @@ void position_check_buttons() {
 	}
 }
 
-
 void position_update_floor() {
 	int floor = elev_get_floor_sensor_signal();
 	if (floor == -1) {
@@ -58,21 +57,17 @@ void position_update_floor() {
 		else if ((direction == DIRN_DOWN) && !(floorf(current_position)-current_position)){
 			current_position = current_floor - 0.5;
 		}
-		printf("Current_position: %f\n", current_position);
-		printf("Current_floor: %i\n", current_floor);
 		return;
 	}
 	elev_set_floor_indicator(floor);
 	current_position = floor;
 	current_floor = floor;
-	printf("Current_position: %f\n", current_position);
-	printf("Current_floor: %i\n", current_floor);
 }
 
 void position_open_door(){
 	if(elev_get_floor_sensor_signal() >= 0){
 		elev_set_door_open_lamp(1);
-}
+	}
 }
 
 void position_close_door(){
