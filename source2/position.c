@@ -1,9 +1,10 @@
 #include "position.h"
 #include "queue.h"
 #include "elev.h"
+#include "state.h"
+
 #include <stdio.h>
 #include <math.h>
-
 
 int current_floor;
 elev_motor_direction_t direction;
@@ -25,10 +26,17 @@ int position_get_floor(){
 	return current_floor;
 }
 
+int position_check_emergency_stop(){
+	if(elev_get_stop_signal()) {
+		state_set_state(EMERGENCY_STOP);
+		return 1;
+	}
+	return 0;
+}
+
 void position_check_buttons() {
 	for (int floor = 0; floor < N_FLOORS; floor++) {
-		//fiks etterpå
-		for (int button = 0; button < 3; button++) {
+		for (int button = 0; button < N_BUTTONS; button++) {
 			if (! ((floor == 3) & (button == 0))) {
 				if (! ((floor == 0) & (button == 1))) {
 					if (elev_get_button_signal(button,floor)) {
@@ -43,7 +51,6 @@ void position_check_buttons() {
 
 void position_update_floor() {
 	int floor = elev_get_floor_sensor_signal();
-	// funker ikke når vi snur mellom etasjer, f. eks. stoppknapp!
 	if (floor == -1) {
 		if ((direction == DIRN_UP) && !(floorf(current_position)-current_position)){
 			current_position = current_floor + 0.5;

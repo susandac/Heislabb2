@@ -30,10 +30,9 @@ void queue_check_floor(int floor, int dir);
 /**
 *@brief Deletes finished orders from the order queue.
 *
-* @param[in] button Button type belonging to the order.
-* @param[in] floor Floor belonging to the order.
+* @param[in] floor The floor that the elevator is stopping on.
 */
-void queue_order_done(int button, int floor);
+void queue_order_done(int floor);
 
 /**
 *@brief Sets button lights inside and outside the elevator.

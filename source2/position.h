@@ -20,13 +20,24 @@ void position_set_dir(int dir);
 int position_get_dir();
 
 /**
-*@brief Returns the value of the floor the elevator is in. Must be 0-3
+*@brief Get the value of the floor the elevator is in.
+*@return the value 0-3 that represents the floor the elevator was last on.
 */
 int position_get_floor();
+
 /**
 *@brief Returns the value of the position the elevator is in.
+*@return  the value 0.0 - 3.0 that represents the position of the elevator.
+*Decimal numbers represent that the elevator is between two floors.
 */
 float position_get_position();
+
+
+/**
+*@brief Shifts state to EMERGENCY_STOP if emergency stop button is pushed
+@return 1 if button is pushed, 0 if not.
+*/
+int position_check_emergency_stop();
 
 /**
 *@brief Polls order buttons and inserts orders into the queue.
@@ -39,10 +50,10 @@ void position_check_buttons();
 void position_update_floor();
 
 /**
-*@brief Sets door lamp to 1
+*@brief Checks that it is safe to open the door and sets door lamp to 1.
 */
 void position_open_door();
 /**
-*@brief Sets door lamp to 0
+*@brief Sets door lamp to 0.
 */
 void position_close_door();

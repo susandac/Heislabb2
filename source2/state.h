@@ -12,9 +12,10 @@ typedef enum tag_state_elevator_states {
 } state_elevator_states_t;
 
 /**
-*@brief Shifts state to EMERGENCY_STOP if emergency stop button is pushed
+*@brief Moves the elevator down to a floor if no floor sensor
+*is active at start.
 */
-void state_check_emergency_stop();
+void state_initialize();
 
 /**
 *@brief Controls the state of the elevator
