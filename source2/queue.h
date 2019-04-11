@@ -48,8 +48,7 @@ void queue_set_button_lights();
 /**
 * @brief Checks the orderqueue and decides which way the elevator should drive.
 * @param[in] current_floor Floor the elevator was last on.
-* @param[in] position The position of the elevator
 *Decimal numbers represent that the elevator is between two floors.
 * @return 1 if driection is up, -1 if direction is down, 0 if order stop and 2 if do nothing.
 */
-int queue_check_orderqueue(int current_floor, int position);
+int queue_check_orderqueue(int current_floor);

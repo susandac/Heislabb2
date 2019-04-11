@@ -77,11 +77,11 @@ int queue_check_floor(int floor_var, elev_motor_direction_t dir){
 	return 0;
 }
 
-int queue_check_orderqueue(int current_floor, int position){
+int queue_check_orderqueue(int current_floor){
 	int orders_above = 0;
 	int extra_floors_to_check_above = 0;
 
-	if(position < current_floor){
+	if(position_get_position() < current_floor){
 		extra_floors_to_check_above = 1;
 	}
 	if (current_floor + 1 - extra_floors_to_check_above <= N_FLOORS){
@@ -96,7 +96,7 @@ int queue_check_orderqueue(int current_floor, int position){
 		}
 	int orders_below = 0;
     int extra_floors_to_check_below = 0;
-	if(position > current_floor){
+	if(position_get_position() > current_floor){
 		extra_floors_to_check_below = 1;
 	}
 	for(int floor=0; floor < current_floor + extra_floors_to_check_below; floor++){

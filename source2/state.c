@@ -78,17 +78,17 @@ void state_elevator_FSM(){
 		elev_set_motor_direction(DIRN_STOP);
 		queue_check_buttons();
 		queue_set_button_lights();
-		if (queue_check_orderqueue(position_get_floor(), position_get_position()) == 1){
+		if (queue_check_orderqueue(position_get_floor()) == 1){
 			elev_set_motor_direction(DIRN_UP);
 			position_set_dir(DIRN_UP);
 			state_set_state(DRIVING);
 		}
-		else if (queue_check_orderqueue(position_get_floor(), position_get_position()) == -1){
+		else if (queue_check_orderqueue(position_get_floor()) == -1){
 			elev_set_motor_direction(DIRN_DOWN);
 			position_set_dir(DIRN_DOWN);
 			state_set_state(DRIVING);
 		}
-		else if (queue_check_orderqueue(position_get_floor(), position_get_position()) == 0){
+		else if (queue_check_orderqueue(position_get_floor()) == 0){
 			state_set_state(ORDER_STOP);
 		}
 
