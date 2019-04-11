@@ -1,7 +1,7 @@
 
 /**
 * @file
-* @brief A final state machine for the elevator
+* @brief A finite state machine for the elevator
 */
 
 typedef enum tag_state_elevator_states {
@@ -21,10 +21,3 @@ void state_initialize();
 *@brief Controls the state of the elevator
 */
 void state_elevator_FSM();
-
-/**
-*@brief Shifts the variable @c current_state to @p state
-*
-*@param[in] state next state for the elevator FSM
-*/
-void state_set_state(state_elevator_states_t state);

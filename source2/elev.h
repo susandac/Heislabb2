@@ -1,3 +1,8 @@
+/**
+* @file
+* @brief These functions provides an interface to the elevators in the real time lab.
+*/
+
 // Wrapper for libComedi Elevator control.
 // These functions provides an interface to the elevators in the real time lab
 //

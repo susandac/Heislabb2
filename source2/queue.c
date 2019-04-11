@@ -1,11 +1,6 @@
 #include "queue.h"
 #include "elev.h"
 #include "position.h"
-#include "state.h"
-
-//Kunne kanskje fiksa state-ting i state?
-//Kunne vi klart oss uten elev her?
-//Forslag: legge til drive up og drive down funksjoner i position som fikser motor, variabel og state. Evt bare motor og variabel.
 
 #include <stdio.h>
 
@@ -14,11 +9,11 @@ int orderqueue[N_FLOORS][N_BUTTONS] = {{0}};
 void queue_insert_order(int button, int floor){
 	orderqueue[floor][button] = 1;
 }
+
 void queue_delete_all(){
 	for(int floor=0; floor<N_FLOORS; floor++){
 		for(int button=0; button<N_BUTTONS; button++){
 			orderqueue[floor][button]=0;
-
 		}
 	}
 	queue_set_button_lights();
@@ -30,14 +25,28 @@ void queue_order_done(int floor){
 	}
 }
 
-void queue_check_floor(int floor_var, elev_motor_direction_t dir){
+void queue_check_buttons() {
+	for (int floor = 0; floor < N_FLOORS; floor++) {
+		for (int button = 0; button < N_BUTTONS; button++) {
+			if (! ((floor == 3) & (button == 0))) {
+				if (! ((floor == 0) & (button == 1))) {
+					if (elev_get_button_signal(button,floor)) {
+						queue_insert_order(button,floor);
+					}
+				}
+			}
+		}
+	}
+}
+
+//return 1 for order stop, 0 for continue
+int queue_check_floor(int floor_var, elev_motor_direction_t dir){
 	if (elev_get_floor_sensor_signal() == -1) {
-		return;
+		return 0;
 	}
 	if(dir == DIRN_UP){
 		if(orderqueue[floor_var][BUTTON_CALL_UP] || orderqueue[floor_var][BUTTON_COMMAND]){
-			state_set_state(ORDER_STOP);
-			return;
+			return 1;
 		}
 		int orders_above = 0;
 		for(int floor = (floor_var+1); floor < N_FLOORS; floor++){
@@ -46,13 +55,13 @@ void queue_check_floor(int floor_var, elev_motor_direction_t dir){
 			}
 		}
 		if (orders_above == 0){
-			state_set_state(ORDER_STOP);
 			position_set_dir(DIRN_STOP);
+			return 1;
 		}
 	}
 	if(dir == DIRN_DOWN){
 		if(orderqueue[floor_var][BUTTON_CALL_DOWN] || orderqueue[floor_var][BUTTON_COMMAND]){
-			state_set_state(ORDER_STOP);
+			return 1;
 		 }
 		int orders_below = 0;
 		for(int floor = (floor_var-1); floor >= 0; floor--){
@@ -61,17 +70,18 @@ void queue_check_floor(int floor_var, elev_motor_direction_t dir){
 			}
 		}
 		if (orders_below == 0){
-			state_set_state(ORDER_STOP);
 			position_set_dir(DIRN_STOP);
+			return 1;
 		}
 	}
+	return 0;
 }
 
-void queue_check_orderqueue(int current_floor, int dir){
+int queue_check_orderqueue(int current_floor, int position){
 	int orders_above = 0;
 	int extra_floors_to_check_above = 0;
 
-	if(position_get_position() < current_floor){
+	if(position < current_floor){
 		extra_floors_to_check_above = 1;
 	}
 	if (current_floor + 1 - extra_floors_to_check_above <= N_FLOORS){
@@ -81,15 +91,12 @@ void queue_check_orderqueue(int current_floor, int dir){
 			}
 		}
 			if(orders_above > 0){
-				elev_set_motor_direction(DIRN_UP);
-				position_set_dir(DIRN_UP);
-				state_set_state(DRIVING);
-				return;
+				return 1;
 			}
 		}
 	int orders_below = 0;
     int extra_floors_to_check_below = 0;
-	if(position_get_position() > current_floor){
+	if(position > current_floor){
 		extra_floors_to_check_below = 1;
 	}
 	for(int floor=0; floor < current_floor + extra_floors_to_check_below; floor++){
@@ -98,16 +105,12 @@ void queue_check_orderqueue(int current_floor, int dir){
 		}
 	}
 	if(orders_below > 0){
-		elev_set_motor_direction(DIRN_DOWN);
-		position_set_dir(DIRN_DOWN);
-		state_set_state(DRIVING);
-		return;
+		return -1;
 	}
 	if (orderqueue[current_floor][BUTTON_CALL_UP]|| orderqueue[current_floor][BUTTON_COMMAND] || orderqueue[current_floor][BUTTON_CALL_DOWN]){
-		state_set_state(ORDER_STOP);
-		return;
+		return 0;
 	}
-	state_set_state(IDLE);
+	return 2;
 }
 
 void queue_set_button_lights(){

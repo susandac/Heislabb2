@@ -1,7 +1,5 @@
 #include "position.h"
-#include "queue.h"
 #include "elev.h"
-#include "state.h"
 
 #include <stdio.h>
 #include <math.h>
@@ -24,28 +22,6 @@ float position_get_position(){
 
 int position_get_floor(){
 	return current_floor;
-}
-
-int position_check_emergency_stop(){
-	if(elev_get_stop_signal()) {
-		state_set_state(EMERGENCY_STOP);
-		return 1;
-	}
-	return 0;
-}
-
-void position_check_buttons() {
-	for (int floor = 0; floor < N_FLOORS; floor++) {
-		for (int button = 0; button < N_BUTTONS; button++) {
-			if (! ((floor == 3) & (button == 0))) {
-				if (! ((floor == 0) & (button == 1))) {
-					if (elev_get_button_signal(button,floor)) {
-						queue_insert_order(button,floor);
-					}
-				}
-			}
-		}
-	}
 }
 
 void position_update_floor() {

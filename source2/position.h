@@ -2,7 +2,7 @@
 /**
 * @file
 * @brief Keeps track of elevator position and direction and has functions
-*for polling buttons and sensors
+*for polling buttons and sensors.
 */
 
 /**
@@ -31,18 +31,6 @@ int position_get_floor();
 *Decimal numbers represent that the elevator is between two floors.
 */
 float position_get_position();
-
-
-/**
-*@brief Shifts state to EMERGENCY_STOP if emergency stop button is pushed
-@return 1 if button is pushed, 0 if not.
-*/
-int position_check_emergency_stop();
-
-/**
-*@brief Polls order buttons and inserts orders into the queue.
-*/
-void position_check_buttons();
 
 /**
 *@brief Checks and updades current_floor and floor indicators.

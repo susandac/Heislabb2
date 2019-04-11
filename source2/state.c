@@ -5,8 +5,6 @@
 #include "timer.h"
 #include <stdio.h>
 
-//Kanskje state kunne vert uavhengig av elev.h?
-
 state_elevator_states_t current_state;
 
 void state_set_state(state_elevator_states_t state){
@@ -20,6 +18,7 @@ void state_initialize(){
 	}
 	position_set_dir(DIRN_STOP);
 	state_set_state(IDLE);
+	position_update_floor();
 }
 
 void state_elevator_FSM(){
@@ -27,7 +26,6 @@ void state_elevator_FSM(){
 		case EMERGENCY_STOP:
 		elev_set_motor_direction(DIRN_STOP);
 		queue_delete_all();
-		position_update_floor();
 		if(elev_get_floor_sensor_signal()==-1){
 			state_set_state(IDLE);
 		}
@@ -36,16 +34,20 @@ void state_elevator_FSM(){
 			state_set_state(ORDER_STOP);
 		}
 		elev_set_stop_lamp(1);
-		while(position_check_emergency_stop()){ };
+		while(elev_get_stop_signal()){ };
 		elev_set_stop_lamp(0);
 		break;
 
 		case DRIVING:
-		position_check_emergency_stop();
-		position_check_buttons();
+		queue_check_buttons();
 		queue_set_button_lights();
 		position_update_floor();
-		queue_check_floor(position_get_floor(), position_get_dir());
+		if (queue_check_floor(position_get_floor(), position_get_dir())){
+			state_set_state(ORDER_STOP);
+		}
+		if(elev_get_stop_signal()) {
+			state_set_state(EMERGENCY_STOP);
+		}
 		break;
 
 		case ORDER_STOP:
@@ -55,10 +57,10 @@ void state_elevator_FSM(){
 		timer_start_timer();
 
 		while (!timer_timeout()){
-			position_check_buttons();
+			queue_check_buttons();
 			queue_set_button_lights();
-			position_check_emergency_stop();
 			if (elev_get_stop_signal()){
+				state_set_state(EMERGENCY_STOP);
 				break;
 			}
 		}
@@ -73,12 +75,26 @@ void state_elevator_FSM(){
 		break;
 
 		case IDLE:
-		position_update_floor();
 		elev_set_motor_direction(DIRN_STOP);
-		position_check_buttons();
+		queue_check_buttons();
 		queue_set_button_lights();
-		queue_check_orderqueue(position_get_floor());
-		position_check_emergency_stop();
+		if (queue_check_orderqueue(position_get_floor(), position_get_position()) == 1){
+			elev_set_motor_direction(DIRN_UP);
+			position_set_dir(DIRN_UP);
+			state_set_state(DRIVING);
+		}
+		else if (queue_check_orderqueue(position_get_floor(), position_get_position()) == -1){
+			elev_set_motor_direction(DIRN_DOWN);
+			position_set_dir(DIRN_DOWN);
+			state_set_state(DRIVING);
+		}
+		else if (queue_check_orderqueue(position_get_floor(), position_get_position()) == 0){
+			state_set_state(ORDER_STOP);
+		}
+
+		if(elev_get_stop_signal()) {
+			state_set_state(EMERGENCY_STOP);
+		}
 		break;
 	}
 }
